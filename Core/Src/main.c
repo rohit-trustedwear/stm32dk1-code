@@ -559,11 +559,12 @@ static void MX_DMA2D_Init(void)
   */
 void DMA2D_IRQHandler(void)
 {
-    if (DMA2D->ISR & DMA2D_ISR_TCIF)
-    {
-        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
-        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
-    }
+	HAL_DMA2D_IRQHandler(&hdma2d);  // Handle the DMA2D interrupt
+//    if (DMA2D->ISR & DMA2D_ISR_TCIF)
+//    {
+//        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
+//        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
+//    }
 }
 
 
