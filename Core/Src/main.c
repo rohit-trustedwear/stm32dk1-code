@@ -172,6 +172,39 @@ void lvgl_display_init(void)
 }
 
 
+//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+//{
+//    // Calculate the width and height of the area to copy
+//    lv_coord_t width = lv_area_get_width(area);
+//    lv_coord_t height = lv_area_get_height(area);
+//
+//    // Calculate the destination address in the frame buffer
+//    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
+//                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
+//
+//    // Pointer to the destination in the frame buffer
+//    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
+//
+//    // Pointer to the source buffer (provided by LVGL)
+//    lv_color_t *src_ptr = color_p;
+//
+//    // Iterate over each row in the area
+//    for (lv_coord_t y = 0; y < height; y++)
+//    {
+//        // Copy one row of pixels from the source to the destination
+//        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
+//
+//        // Move the source pointer to the next row
+//        src_ptr += width;
+//
+//        // Move the destination pointer to the next row in the frame buffer
+//        dst_ptr += MY_DISP_HOR_RES;
+//    }
+//
+//    // Notify LVGL that the flush is ready
+//    lv_disp_flush_ready(drv);
+//}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
@@ -198,36 +231,38 @@ static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *co
 }
 
 
-static void
-disp_flush_complete (DMA2D_HandleTypeDef *hdma2d)
-{
-  lv_disp_flush_ready(&disp_drv);
-}
-
-
 void configureInterrupts(void)
 {
     NVIC_SetPriority(DSI_IRQn, 9);
     NVIC_EnableIRQ(DSI_IRQn);
 
     // New configurations for DMA2D interrupt
-       NVIC_SetPriority(DMA2D_IRQn, 9); // You can adjust the priority as needed
-       NVIC_EnableIRQ(DMA2D_IRQn);
+    NVIC_SetPriority(DMA2D_IRQn, 9); // You can adjust the priority as needed
+    NVIC_EnableIRQ(DMA2D_IRQn);
 }
 
 
-// Callback function called by HAL when DMA2D transfer is complete
-void HAL_DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
+/**
+  * @brief This function handles GPU2D Error interrupt.
+  */
+void DMA2D_IRQHandler(void)
 {
-    disp_flush_complete(&hdma2d);
+	//HAL_DMA2D_IRQHandler(&hdma2d);  // Handle the DMA2D interrupt
+    if (DMA2D->ISR & DMA2D_ISR_TCIF)
+    {
+        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
+        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
+    }
 }
 
-// Callback function called by HAL when DMA2D transfer encounters an error
-void HAL_DMA2D_ErrorCallback(DMA2D_HandleTypeDef *hdma2d)
+void LVGL_Task(void *argument)
 {
-    // Handle the DMA2D transfer error (optional)
+    for(;;)
+    {
+        lv_task_handler();  // Handle LVGL tasks
+        osDelay(5);         // Delay for 5ms
+    }
 }
-
 
 /**
   * @brief  The application entry point.
@@ -293,6 +328,14 @@ int main(void)
 
 
     configureInterrupts();
+
+    // Create LVGL task
+       osThreadAttr_t attr = {
+           .name = "LVGL_Task",
+           .priority = osPriorityNormal,
+           .stack_size = 512 * 4
+       };
+       osThreadNew(LVGL_Task, NULL, &attr);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -551,21 +594,10 @@ static void MX_DMA2D_Init(void)
 
 	  /* USER CODE END DMA2D_Init 2 */
 
+	  __HAL_RCC_DMA2D_CLK_ENABLE();
+
 }
 
-
-/**
-  * @brief This function handles GPU2D Error interrupt.
-  */
-void DMA2D_IRQHandler(void)
-{
-	HAL_DMA2D_IRQHandler(&hdma2d);  // Handle the DMA2D interrupt
-//    if (DMA2D->ISR & DMA2D_ISR_TCIF)
-//    {
-//        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
-//        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
-//    }
-}
 
 
 /**
