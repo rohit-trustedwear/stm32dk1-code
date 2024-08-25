@@ -131,40 +131,46 @@ static __attribute__((aligned(32))) lv_color_t buf_1[MY_DISP_HOR_RES * MY_DISP_V
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-
-void
-lvgl_display_init (void)
+void lvgl_display_init(void)
 {
-  /* display initialization */
-  ; /* display is already initialized by cubemx-generated code */
+    /* Initialize display buffer */
+    lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);
 
-  /* display buffer initialization */
-  lv_disp_draw_buf_init (&disp_buf,
-                         (void*) buf_1,
-                         NULL,
-                         MY_DISP_HOR_RES * MY_DISP_VER_RES);
+    /* Initialize display driver */
+    lv_disp_drv_init(&disp_drv);
 
-  /* register the display in LVGL */
-  lv_disp_drv_init(&disp_drv);
+    /* Set resolution of the display */
+    disp_drv.hor_res = MY_DISP_HOR_RES;
+    disp_drv.ver_res = MY_DISP_VER_RES;
 
-  /* set the resolution of the display */
-  disp_drv.hor_res = MY_DISP_HOR_RES;
-  disp_drv.ver_res = MY_DISP_VER_RES;
+    /* Register flush callback */
+    disp_drv.flush_cb = disp_flush;
 
-  /* set callback for display driver */
-  disp_drv.flush_cb = disp_flush;
-  disp_drv.full_refresh = 0;
-  disp_drv.direct_mode = 1;
+    /* Set display buffer */
+    disp_drv.draw_buf = &disp_buf;
 
-  /* interrupt callback for DMA2D transfer */
-  hdma2d.XferCpltCallback = disp_flush_complete;
+    /* Disable DSI wrapper before setting the frame buffer address */
+    __HAL_DSI_WRAPPER_DISABLE(&hdsi);
 
-  /* set a display buffer */
-  disp_drv.draw_buf = &disp_buf;
+    /* Set the LTDC frame buffer start address */
+    HAL_LTDC_SetAddress(&hltdc, (uint32_t)buf_1, 0);
 
-  /* finally register the driver */
-  lv_disp_drv_register(&disp_drv);
+    /* Re-enable DSI wrapper after setting the frame buffer */
+    __HAL_DSI_WRAPPER_ENABLE(&hdsi);
+
+    /* Register display driver */
+    lv_disp_drv_register(&disp_drv);
+
+    /* Enable the LCD, Send Display on DCS command to display */
+    HAL_DSI_ShortWrite(&hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, DSI_SET_DISPLAY_ON, 0x00);
+
+    /* Start PWM Timer channel for backlight */
+    (void)HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
+
+    /* Enable Backlight by setting Brightness to 100% */
+    __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 2U * 100);
 }
+
 
 /**********************
  *   STATIC FUNCTIONS
@@ -177,10 +183,10 @@ static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *co
 	  lv_coord_t height = lv_area_get_height(area);
 
 	  DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;
-	  DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;
+	  DMA2D->FGPFCCR = DMA2D_INPUT_RGB888;
 	  DMA2D->FGMAR = (uint32_t)color_p;
 	  DMA2D->FGOR = 0;
-	  DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;
+	  DMA2D->OPFCCR = DMA2D_OUTPUT_RGB888;
 	  DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress + 2 * \
 	                (area->y1 * MY_DISP_HOR_RES + area->x1);
 	  DMA2D->OOR = MY_DISP_HOR_RES - width;
@@ -196,6 +202,30 @@ static void
 disp_flush_complete (DMA2D_HandleTypeDef *hdma2d)
 {
   lv_disp_flush_ready(&disp_drv);
+}
+
+
+void configureInterrupts(void)
+{
+    NVIC_SetPriority(DSI_IRQn, 9);
+    NVIC_EnableIRQ(DSI_IRQn);
+
+    // New configurations for DMA2D interrupt
+       NVIC_SetPriority(DMA2D_IRQn, 9); // You can adjust the priority as needed
+       NVIC_EnableIRQ(DMA2D_IRQn);
+}
+
+
+// Callback function called by HAL when DMA2D transfer is complete
+void HAL_DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+    disp_flush_complete(&hdma2d);
+}
+
+// Callback function called by HAL when DMA2D transfer encounters an error
+void HAL_DMA2D_ErrorCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+    // Handle the DMA2D transfer error (optional)
 }
 
 
@@ -261,15 +291,15 @@ int main(void)
 
     ui_init();
 
-    /* Enable the LCD, Send Display on DCS command to display */
-    HAL_DSI_ShortWrite(&hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, DSI_SET_DISPLAY_ON, 0x00);
+
+    configureInterrupts();
   /* USER CODE END 2 */
 
   /* Init scheduler */
   osKernelInitialize();
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
-  MX_FREERTOS_Init();
+  //MX_FREERTOS_Init();
 
 
   /* Start scheduler */
@@ -499,12 +529,12 @@ static void MX_DMA2D_Init(void)
 	  /* USER CODE END DMA2D_Init 1 */
 	  hdma2d.Instance = DMA2D;
 	  hdma2d.Init.Mode = DMA2D_M2M;
-	  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB565;
+	  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB888;
 	  hdma2d.Init.OutputOffset = 0;
 	  hdma2d.Init.BytesSwap = DMA2D_BYTES_REGULAR;
 	  hdma2d.Init.LineOffsetMode = DMA2D_LOM_PIXELS;
 	  hdma2d.LayerCfg[1].InputOffset = 0;
-	  hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB565;
+	  hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB888;
 	  hdma2d.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
 	  hdma2d.LayerCfg[1].InputAlpha = 0;
 	  hdma2d.LayerCfg[1].AlphaInverted = DMA2D_REGULAR_ALPHA;
@@ -524,17 +554,17 @@ static void MX_DMA2D_Init(void)
 }
 
 
-///**
-//  * @brief This function handles GPU2D Error interrupt.
-//  */
-//void DMA2D_IRQHandler(void)
-//{
-//    if (DMA2D->ISR & DMA2D_ISR_TCIF)
-//    {
-//        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
-//        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
-//    }
-//}
+/**
+  * @brief This function handles GPU2D Error interrupt.
+  */
+void DMA2D_IRQHandler(void)
+{
+    if (DMA2D->ISR & DMA2D_ISR_TCIF)
+    {
+        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
+        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
+    }
+}
 
 
 /**
@@ -607,7 +637,7 @@ static void MX_DSIHOST_DSI_Init(void)
   {
     Error_Handler();
   }
-  VidCfg.ColorCoding = DSI_RGB565;
+  VidCfg.ColorCoding = DSI_RGB888;
   VidCfg.LooselyPacked = DSI_LOOSELY_PACKED_DISABLE;
   VidCfg.Mode = DSI_VID_MODE_BURST;
   VidCfg.PacketSize = 480;
@@ -878,7 +908,7 @@ static void MX_LTDC_Init(void)
   pLayerCfg.WindowX1 = 480;
   pLayerCfg.WindowY0 = 1;
   pLayerCfg.WindowY1 = 481;
-  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB888;
   pLayerCfg.Alpha = 255;
   pLayerCfg.Alpha0 = 0;
   pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
@@ -1339,7 +1369,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  lv_tick_inc(1);
   /* USER CODE END Callback 1 */
 }
 
