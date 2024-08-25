@@ -1,0 +1,5 @@
+SvgPresenter.hpp:28:13:SvgPresenter::~SvgPresenter()	0	static
+SvgPresenter.cpp:10:6:virtual void SvgPresenter::activate()	0	static
+SvgPresenter.hpp:28:13:virtual SvgPresenter::~SvgPresenter()	8	static
+SvgPresenter.hpp:28:13:virtual void* SvgPresenter::_ZThn4_N12SvgPresenterD1Ev()	0	static
+SvgPresenter.cpp:4:1:SvgPresenter::SvgPresenter(SvgView&)	8	static

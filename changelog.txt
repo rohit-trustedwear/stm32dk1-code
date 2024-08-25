@@ -1,0 +1,24 @@
+3.0.4
+- Updated to STM32CubeMX 6.12.0
+- Updated to Firmware Package FW_U5 V1.6.0
+
+3.0.3
+- Updated to TouchGFX 4.24.0
+
+3.0.2
+- Updated to STM32CubeMX 6.11.0
+- Updated to Firmware Package FW_U5 V1.5.0
+- Updated BSP driver files
+
+3.0.1
+- Support for MDK-ARM Keil IDE
+
+3.0.0
+First released version
+- TouchGFX 4.23.0
+- STM32CubeMX 6.10.0
+- firmware FW U5 1.4.0
+- X-CUBE-FREERTOS 1.0.0
+- support for STM32CubeIDE
+- support for EWARM
+- support "Run target" in TouchGFX Designer

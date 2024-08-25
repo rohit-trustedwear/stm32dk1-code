@@ -1,0 +1,5 @@
+../../TouchGFX/gui/include/gui/watch_screen/WatchPresenter.hpp:28:13:WatchPresenter::~WatchPresenter()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/watch_screen/WatchPresenter.cpp:10:6:virtual void WatchPresenter::activate()	1
+../../TouchGFX/gui/include/gui/watch_screen/WatchPresenter.hpp:28:13:virtual WatchPresenter::~WatchPresenter()	1
+../../TouchGFX/gui/include/gui/watch_screen/WatchPresenter.hpp:28:13:virtual void* WatchPresenter::_ZThn4_N14WatchPresenterD1Ev()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/watch_screen/WatchPresenter.cpp:4:1:WatchPresenter::WatchPresenter(WatchView&)	1

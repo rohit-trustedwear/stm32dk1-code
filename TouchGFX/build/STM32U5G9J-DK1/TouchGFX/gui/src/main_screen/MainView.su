@@ -1,0 +1,9 @@
+Screen.hpp:144:18:virtual void touchgfx::Screen::handleTickEvent()	0	static
+Screen.hpp:154:18:virtual void touchgfx::Screen::handleKeyEvent(uint8_t)	0	static
+MainView.cpp:27:6:virtual void MainView::tearDownScreen()	0	static
+MainView.cpp:38:6:virtual void MainView::changeScreen(uint8_t)	0	static
+MainView.cpp:32:6:virtual void MainView::startFlowerAnimation()	0	static
+MainView.hpp:14:13:MainView::~MainView()	8	static
+MainView.hpp:14:13:virtual MainView::~MainView()	8	static
+MainView.cpp:15:1:MainView::MainView()	8	static
+MainView.cpp:20:6:virtual void MainView::setupScreen()	8	static

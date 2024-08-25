@@ -1,0 +1,8 @@
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:269:17:lv_lru_hash	5
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:314:13:lv_lru_remove_item	2
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:73:12:lv_lru_create	3
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:103:6:lv_lru_del	7
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:192:14:lv_lru_get	6
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:215:14:lv_lru_remove	6
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:237:6:lv_lru_remove_lru_item	6
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/misc/lv_lru.c:139:14:lv_lru_set	14

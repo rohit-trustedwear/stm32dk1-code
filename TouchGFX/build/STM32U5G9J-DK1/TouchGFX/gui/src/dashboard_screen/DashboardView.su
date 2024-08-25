@@ -1,0 +1,23 @@
+Screen.hpp:104:18:virtual void touchgfx::Screen::afterTransition()	0	static
+Screen.hpp:115:18:virtual void touchgfx::Screen::tearDownScreen()	0	static
+Screen.hpp:154:18:virtual void touchgfx::Screen::handleKeyEvent(uint8_t)	0	static
+DashboardViewBase.hpp:35:18:virtual void DashboardViewBase::goToMain()	0	static
+DashboardView.hpp:82:7:DashboardView::~DashboardView()	8	static
+DashboardView.hpp:82:7:virtual DashboardView::~DashboardView()	8	static
+TextureMapper.hpp:612:18:virtual void touchgfx::TextureMapper::invalidateContent() const	16	static
+DashboardView.cpp:47:6:void DashboardView::clamp(float&, float, float)	0	static
+DashboardView.cpp:222:6:virtual void DashboardView::handleDragEvent(const touchgfx::DragEvent&)	48	static
+DashboardView.cpp:289:6:bool Battery::update(float)	0	static
+DashboardView.cpp:321:7:float Speedometer::computeVelocity(float) const	8	static
+DashboardView.cpp:327:6:bool Speedometer::update(float)	8	static
+DashboardView.cpp:343:7:float Units::metersToFeet(float)	0	static
+DashboardView.cpp:349:7:float Units::kmhToMph(float)	0	static
+DashboardView.cpp:355:6:bool ElevationSimulation::update(float)	56	static
+DashboardView.cpp:149:6:void DashboardView::updateBattery()	32	static
+DashboardView.cpp:171:6:void DashboardView::updateElevation()	16	static
+DashboardView.cpp:93:6:void DashboardView::updateSpeedometer(float)	40	static
+DashboardView.cpp:265:6:virtual void DashboardView::selectKmh()	0	static
+DashboardView.cpp:278:6:virtual void DashboardView::selectMiles()	4	static
+DashboardView.cpp:191:6:void DashboardView::update()	8	static
+DashboardView.cpp:60:6:virtual void DashboardView::setupScreen()	16	static
+DashboardView.cpp:215:6:virtual void DashboardView::handleTickEvent()	8	static

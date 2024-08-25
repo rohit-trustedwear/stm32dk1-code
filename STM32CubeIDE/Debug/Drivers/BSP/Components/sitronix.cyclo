@@ -1,0 +1,16 @@
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:129:9:SITRONIX_GetCapabilities	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:183:9:SITRONIX_DeInit	2
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:200:9:SITRONIX_GestureConfig	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:310:9:SITRONIX_EnableIT	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:411:16:ReadRegWrap	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:426:16:WriteRegWrap	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:440:16:ReadDataWrap	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:150:9:SITRONIX_Init	3
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:212:9:SITRONIX_ReadID	4
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:242:9:SITRONIX_GetState	2
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:270:9:SITRONIX_GetMultiTouchState	2
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:358:9:SITRONIX_ClearIT	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:295:9:SITRONIX_GetGesture	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:325:9:SITRONIX_DisableIT	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:342:9:SITRONIX_ITStatus	1
+C:/TouchGFXProjects/MyApplication_3/Drivers/BSP/Components/sitronix/sitronix.c:87:9:SITRONIX_RegisterBusIO	3

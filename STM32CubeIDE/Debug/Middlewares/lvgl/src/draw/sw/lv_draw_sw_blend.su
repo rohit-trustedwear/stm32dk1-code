@@ -1,0 +1,6 @@
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/../../misc/lv_color.h:439:48:lv_color_mix	8	static
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/lv_draw_sw_blend.c:945:26:color_blend_true_color_additive	24	static
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/lv_draw_sw_blend.c:998:26:color_blend_true_color_subtractive	24	static
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/lv_draw_sw_blend.c:1024:26:color_blend_true_color_multiply	24	static
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/lv_draw_sw_blend.c:91:6:lv_draw_sw_blend	24	static
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/sw/lv_draw_sw_blend.c:104:28:lv_draw_sw_blend_basic	104	static

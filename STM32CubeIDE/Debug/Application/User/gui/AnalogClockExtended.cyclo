@@ -1,0 +1,21 @@
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:315:18:virtual void touchgfx::Drawable::setX(int16_t)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:327:18:virtual void touchgfx::Drawable::setY(int16_t)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:356:18:virtual void touchgfx::Drawable::setWidth(int16_t)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:368:18:virtual void touchgfx::Drawable::setHeight(int16_t)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:378:18:virtual void touchgfx::Drawable::childGeometryChanged()	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:389:18:virtual void touchgfx::Drawable::handleClickEvent(const touchgfx::ClickEvent&)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:401:18:virtual void touchgfx::Drawable::handleGestureEvent(const touchgfx::GestureEvent&)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:490:18:virtual void touchgfx::Drawable::handleDragEvent(const touchgfx::DragEvent&)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:501:18:virtual void touchgfx::Drawable::handleTickEvent()	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Drawable.hpp:588:18:virtual void touchgfx::Drawable::moveTo(int16_t, int16_t)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/containers/Container.hpp:165:23:virtual touchgfx::Drawable* touchgfx::Container::getFirstChild()	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/containers/clock/AnalogClock.hpp:174:22:virtual uint16_t touchgfx::AnalogClock::getAnimationDuration()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:24:1:touchgfx::AnalogClockExtended::~AnalogClockExtended()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:28:6:virtual void touchgfx::AnalogClockExtended::setAlpha(uint8_t)	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:36:9:virtual uint8_t touchgfx::AnalogClockExtended::getAlpha() const	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:24:1:virtual touchgfx::AnalogClockExtended::~AnalogClockExtended()	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/containers/clock/AnalogClock.hpp:219:18:virtual void touchgfx::AnalogClock::invalidateContent() const	3
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/TextureMapper.hpp:216:18:virtual void touchgfx::TextureMapper::updateZAngle(float)	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:20:1:touchgfx::AnalogClockExtended::AnalogClockExtended()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:40:6:void touchgfx::AnalogClockExtended::setMinuteZAngle(float)	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/widgets/AnalogClockExtended.cpp:44:6:void touchgfx::AnalogClockExtended::setSecondsZAngle(float)	1

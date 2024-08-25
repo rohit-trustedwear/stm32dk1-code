@@ -1,0 +1,10 @@
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/../../misc/lv_color.h:375:24:lv_color_to32	1
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:604:28:_lv_gpu_stm32_dma2d_await_dma_transfer_finish.constprop	5
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:589:28:_lv_gpu_stm32_dma2d_start_dma_transfer	2
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:404:28:_lv_draw_stm32_dma2d_blend_map	13
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:197:13:lv_draw_stm32_dma2d_buffer_copy	1
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:217:13:lv_draw_stm32_dma2d_img_decoded	8
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:87:13:lv_draw_stm32_dma2d_blend	12
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:42:6:lv_draw_stm32_dma2d_init	1
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:67:6:lv_draw_stm32_dma2d_ctx_init	1
+C:/TouchGFXProjects/MyApplication_3/Middlewares/lvgl/src/draw/stm32_dma2d/lv_gpu_stm32_dma2d.c:81:6:lv_draw_stm32_dma2d_ctx_deinit	1

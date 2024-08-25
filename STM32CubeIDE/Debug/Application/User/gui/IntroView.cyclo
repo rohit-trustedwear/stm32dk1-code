@@ -1,0 +1,13 @@
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/Screen.hpp:154:18:virtual void touchgfx::Screen::handleKeyEvent(uint8_t)	1
+../../TouchGFX/generated/gui_generated/include/gui_generated/intro_screen/IntroViewBase.hpp:28:18:virtual void IntroViewBase::goToMain()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:30:6:virtual void IntroView::tearDownScreen()	1
+../../TouchGFX/gui/include/gui/intro_screen/IntroView.hpp:11:13:IntroView::~IntroView()	1
+../../TouchGFX/gui/include/gui/intro_screen/IntroView.hpp:11:13:virtual IntroView::~IntroView()	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/TextureMapper.hpp:216:18:virtual void touchgfx::TextureMapper::updateZAngle(float)	1
+../../Middlewares/ST/touchgfx/framework/include/touchgfx/widgets/TextureMapper.hpp:612:18:virtual void touchgfx::TextureMapper::invalidateContent() const	2
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:8:1:IntroView::IntroView()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:318:7:float IntroView::floatEaseOut(float, float, float, float)	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:328:7:float IntroView::floatBackEaseOut(float, float, float, float)	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:23:6:virtual void IntroView::setupScreen()	1
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:35:6:virtual void IntroView::handleTickEvent()	25
+C:/TouchGFXProjects/MyApplication_3/TouchGFX/gui/src/intro_screen/IntroView.cpp:282:6:virtual void IntroView::screenIsEntered()	1

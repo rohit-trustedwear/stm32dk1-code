@@ -1,0 +1,21 @@
+Screen.hpp:104:18:virtual void touchgfx::Screen::afterTransition()	0	static
+Screen.hpp:115:18:virtual void touchgfx::Screen::tearDownScreen()	0	static
+Screen.hpp:154:18:virtual void touchgfx::Screen::handleKeyEvent(uint8_t)	0	static
+ThermostatViewBase.hpp:28:18:virtual void ThermostatViewBase::goToMain()	0	static
+ThermostatView.cpp:240:6:virtual void ThermostatView::selectCelsius()	0	static
+ThermostatView.cpp:247:6:virtual void ThermostatView::selectFahrenheit()	0	static
+ThermostatView.hpp:34:7:ThermostatView::~ThermostatView()	16	static
+ThermostatView.hpp:34:7:virtual ThermostatView::~ThermostatView()	8	static
+TextureMapper.hpp:160:18:virtual void touchgfx::TextureMapper::setZAngle(float)	0	static
+ThermostatView.cpp:44:6:void clamp(float&, float, float)	0	static
+ThermostatView.cpp:57:7:float angleToTemperature(float)	0	static
+ThermostatView.cpp:63:7:float celsiusToFahrenheit(float)	0	static
+ThermostatView.cpp:69:11:touchgfx::colortype ThermostatView::backgroundColor(float)	0	static
+ThermostatView.cpp:132:6:void ThermostatView::updateFan()	24	static
+ThermostatView.cpp:254:6:bool Fan::update(float)	0	static
+ThermostatView.cpp:271:6:bool Thermostat::update(float)	0	static
+ThermostatView.cpp:151:6:void ThermostatView::update()	32	static
+ThermostatView.cpp:125:6:virtual void ThermostatView::handleTickEvent()	8	static
+ThermostatView.cpp:284:6:void ThermostatView::updateLines()	88	static
+ThermostatView.cpp:77:6:virtual void ThermostatView::handleDragEvent(const touchgfx::DragEvent&)	48	static
+ThermostatView.cpp:202:6:virtual void ThermostatView::setupScreen()	32	static

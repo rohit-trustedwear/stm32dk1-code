@@ -1,0 +1,7 @@
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:170:6:StartDefaultTask	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:184:6:LVGLTimer	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:193:6:LVGLTick	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:85:6:vApplicationMallocFailedHook	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:101:6:vApplicationIdleHook	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:116:6:vApplicationStackOverflowHook	1
+C:/TouchGFXProjects/MyApplication_3/Core/Src/app_freertos.c:129:6:MX_FREERTOS_Init	1
