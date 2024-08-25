@@ -344,11 +344,8 @@ int main(void)
   /* Call init function for freertos objects (in cmsis_os2.c) */
   //MX_FREERTOS_Init();
 
-
   /* Start scheduler */
   osKernelStart();
-
-
 
   /* We should never get here as control is now taken by the scheduler */
 
@@ -563,42 +560,29 @@ static void MX_DCACHE2_Init(void)
   */
 static void MX_DMA2D_Init(void)
 {
-	 /* USER CODE BEGIN DMA2D_Init 0 */
 
-	  /* USER CODE END DMA2D_Init 0 */
+  /* USER CODE BEGIN DMA2D_Init 0 */
 
-	  /* USER CODE BEGIN DMA2D_Init 1 */
+  /* USER CODE END DMA2D_Init 0 */
 
-	  /* USER CODE END DMA2D_Init 1 */
-	  hdma2d.Instance = DMA2D;
-	  hdma2d.Init.Mode = DMA2D_M2M;
-	  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB888;
-	  hdma2d.Init.OutputOffset = 0;
-	  hdma2d.Init.BytesSwap = DMA2D_BYTES_REGULAR;
-	  hdma2d.Init.LineOffsetMode = DMA2D_LOM_PIXELS;
-	  hdma2d.LayerCfg[1].InputOffset = 0;
-	  hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB888;
-	  hdma2d.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
-	  hdma2d.LayerCfg[1].InputAlpha = 0;
-	  hdma2d.LayerCfg[1].AlphaInverted = DMA2D_REGULAR_ALPHA;
-	  hdma2d.LayerCfg[1].RedBlueSwap = DMA2D_RB_REGULAR;
-	  if (HAL_DMA2D_Init(&hdma2d) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  if (HAL_DMA2D_ConfigLayer(&hdma2d, 1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  /* USER CODE BEGIN DMA2D_Init 2 */
+  /* USER CODE BEGIN DMA2D_Init 1 */
 
-	  /* USER CODE END DMA2D_Init 2 */
+  /* USER CODE END DMA2D_Init 1 */
+  hdma2d.Instance = DMA2D;
+  hdma2d.Init.Mode = DMA2D_R2M;
+  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB565;
+  hdma2d.Init.OutputOffset = 0;
+  hdma2d.Init.BytesSwap = DMA2D_BYTES_REGULAR;
+  hdma2d.Init.LineOffsetMode = DMA2D_LOM_PIXELS;
+  if (HAL_DMA2D_Init(&hdma2d) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DMA2D_Init 2 */
 
-	  __HAL_RCC_DMA2D_CLK_ENABLE();
+  /* USER CODE END DMA2D_Init 2 */
 
 }
-
-
 
 /**
   * @brief DSIHOST Initialization Function
@@ -670,7 +654,7 @@ static void MX_DSIHOST_DSI_Init(void)
   {
     Error_Handler();
   }
-  VidCfg.ColorCoding = DSI_RGB888;
+  VidCfg.ColorCoding = DSI_RGB565;
   VidCfg.LooselyPacked = DSI_LOOSELY_PACKED_DISABLE;
   VidCfg.Mode = DSI_VID_MODE_BURST;
   VidCfg.PacketSize = 480;
@@ -941,12 +925,12 @@ static void MX_LTDC_Init(void)
   pLayerCfg.WindowX1 = 480;
   pLayerCfg.WindowY0 = 1;
   pLayerCfg.WindowY1 = 481;
-  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB888;
+  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
   pLayerCfg.Alpha = 255;
   pLayerCfg.Alpha0 = 0;
   pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
   pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-  pLayerCfg.FBStartAdress = (uint32_t)(disp_buf.buf1);
+  pLayerCfg.FBStartAdress = 0x0;
   pLayerCfg.ImageWidth = 480;
   pLayerCfg.ImageHeight = 480;
   pLayerCfg.Backcolor.Blue = 0;
