@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32u5xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -91,7 +92,18 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+	/* USER CODE BEGIN HardFault_IRQn 0 */
+	/* Capture system fault information */
+	/* Declare and capture fault status registers */
+	    volatile uint32_t _CFSR = SCB->CFSR;
+	    volatile uint32_t _HFSR = SCB->HFSR;
+	    volatile uint32_t _DFSR = SCB->DFSR;
+	    volatile uint32_t _AFSR = SCB->AFSR;
+	    volatile uint32_t _BFAR = SCB->BFAR;
+	    volatile uint32_t _MMAR = SCB->MMFAR;
 
+	    __BKPT(0); // Trigger a breakpoint if debugging
+	  /* USER CODE END HardFault_IRQn 0 */
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {

@@ -1,0 +1,64 @@
+
+
+STMicroelectronics ST-LINK GDB server. Version 7.8.0
+Copyright (c) 2024, STMicroelectronics. All rights reserved.
+
+Starting server with the following options:
+        Persistent Mode            : Disabled
+        Logging Level              : 1
+        Listen Port Number         : 61234
+        Status Refresh Delay       : 15s
+        Verbose Mode               : Disabled
+        SWD Debug                  : Enabled
+        InitWhile                  : Enabled
+
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+Debugger connected
+Waiting for debugger connection...
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.17.0                  
+      -------------------------------------------------------------------
+
+
+
+Log output file:   C:\Users\rohit\AppData\Local\Temp\STM32CubeProgrammer_a55040.log
+ST-LINK SN  : 002F00173033510535393935
+ST-LINK FW  : V3J15M7
+Board       : STM32U5G9J-DK1
+Voltage     : 1.79V
+SWD freq    : 8000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x476
+Revision ID : Rev Z
+Device name : STM32U5Fx/5Gx
+Flash size  : 4 MBytes (default)
+Device type : MCU
+Device CPU  : Cortex-M33
+BL Version  : 0x90
+Debug in Low Power mode enabled
+
+      -------------------------------------------------------------------
+        Choose flashing speed for Cortex M33 series.(default speed=Reliable)                  
+      -------------------------------------------------------------------
+
+
+
+Memory Programming ...
+Opening and parsing file: ST-LINK_GDB_server_a55040.srec
+  File          : ST-LINK_GDB_server_a55040.srec
+  Size          : 11.41 MB 
+  Address       : 0x08000000 
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 76]
+Erasing memory corresponding to segment 1:
+Erasing external memory sectors [0 172]
+Download in Progress:
+
+
+File download complete
+Time elapsed during download operation: 00:01:01.654

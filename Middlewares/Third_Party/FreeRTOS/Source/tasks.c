@@ -3660,7 +3660,7 @@ static portTASK_FUNCTION( prvIdleTask, pvParameters )
         vPortStoreTaskMPUSettings( &( pxTCB->xMPUSettings ), xRegions, NULL, 0 );
     }
 
-#endif /* portUSING_MPU_WRAPPERS */
+#endif /* portUSING_MPU_WRAPPERS */wwwwwwwwwwwwwwwwwwwww
 /*-----------------------------------------------------------*/
 
 static void prvInitialiseTaskLists( void )

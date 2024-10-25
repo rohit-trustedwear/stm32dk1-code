@@ -24,7 +24,7 @@
 #include "lvgl.h"
 #include "ui.h"
 #include "lv_conf.h"
-
+#include "stm32u5x9j_discovery_ts.h"
 //#include "Middlewares/lvgl_port_touch.h"
 
 
@@ -33,6 +33,7 @@
 /* USER CODE BEGIN Includes */
 #include "stm32u5x9j_discovery_hspi.h"
 #include "stm32u5x9j_discovery_ospi.h"
+#include "stm32u5x9j_discovery_ts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,17 +108,38 @@ static void MX_JPEG_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
+
+static bool _initialized = false;
+static TS_State_t state = {0};  // Touch state structure from BSP
+
+static lv_coord_t last_x = 0;
+static lv_coord_t last_y = 0;
+static lv_indev_state_t last_state = LV_INDEV_STATE_RELEASED;
+
+/**********************
+ *  STATIC PROTOTYPES
+ **********************/
+
+static void
+lvgl_touchscreen_read (lv_indev_drv_t *indev, lv_indev_data_t *data);
+
 /* USER CODE END 0 */
 
 /**********************
  *  STATIC PROTOTYPES
  **********************/
 
+
+
 #define MY_DISP_HOR_RES    480
 #define MY_DISP_VER_RES    480
 
 static void disp_flush (lv_disp_drv_t*, const lv_area_t*, lv_color_t*);
-static void disp_flush_complete (DMA2D_HandleTypeDef*);
+//static void disp_flush_complete (DMA2D_HandleTypeDef*);
 
 /**********************
  *  STATIC VARIABLES
@@ -127,6 +149,7 @@ static lv_disp_drv_t disp_drv;
 static lv_disp_draw_buf_t disp_buf;
 
 static __attribute__((aligned(32))) lv_color_t buf_1[MY_DISP_HOR_RES * MY_DISP_VER_RES];
+static __attribute__((aligned(32))) lv_color_t buf_2[MY_DISP_HOR_RES * MY_DISP_VER_RES];
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -134,7 +157,7 @@ static __attribute__((aligned(32))) lv_color_t buf_1[MY_DISP_HOR_RES * MY_DISP_V
 void lvgl_display_init(void)
 {
     /* Initialize display buffer */
-    lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);
+	lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, MY_DISP_HOR_RES * MY_DISP_VER_RES);
 
     /* Initialize display driver */
     lv_disp_drv_init(&disp_drv);
@@ -167,68 +190,125 @@ void lvgl_display_init(void)
     /* Start PWM Timer channel for backlight */
     (void)HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
 
+
     /* Enable Backlight by setting Brightness to 100% */
     __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 2U * 100);
 }
 
 
-//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
-//{
-//    // Calculate the width and height of the area to copy
-//    lv_coord_t width = lv_area_get_width(area);
-//    lv_coord_t height = lv_area_get_height(area);
-//
-//    // Calculate the destination address in the frame buffer
-//    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
-//                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
-//
-//    // Pointer to the destination in the frame buffer
-//    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
-//
-//    // Pointer to the source buffer (provided by LVGL)
-//    lv_color_t *src_ptr = color_p;
-//
-//    // Iterate over each row in the area
-//    for (lv_coord_t y = 0; y < height; y++)
-//    {
-//        // Copy one row of pixels from the source to the destination
-//        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
-//
-//        // Move the source pointer to the next row
-//        src_ptr += width;
-//
-//        // Move the destination pointer to the next row in the frame buffer
-//        dst_ptr += MY_DISP_HOR_RES;
-//    }
-//
-//    // Notify LVGL that the flush is ready
-//    lv_disp_flush_ready(drv);
-//}
+void
+lvgl_touchscreen_init (void)
+{
+	if (!_initialized) {
+
+	        TS_Init_t TsInit;
+
+	        TsInit.Width = 480;
+	        TsInit.Height = 480;
+	        TsInit.Orientation = TS_ORIENTATION_PORTRAIT;
+	        TsInit.Accuracy = 0;
+
+	        if (BSP_TS_Init(0, &TsInit) == BSP_ERROR_NONE) {
+	            _initialized = true;
+	        }
+	    }
+
+	    /* Register the LVGL input device driver */
+	    static lv_indev_drv_t indev_drv;
+	    lv_indev_drv_init(&indev_drv);  // Initialize the driver
+
+	    indev_drv.type = LV_INDEV_TYPE_POINTER;  // Set type to pointer
+	    indev_drv.read_cb = lvgl_touchscreen_read;  // Set read callback
+
+	    lv_indev_drv_register(&indev_drv);  // Register the driver with LVGL
+}
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
+static void
+lvgl_touchscreen_read (lv_indev_drv_t  *indev,
+                       lv_indev_data_t *data)
+{
+	 // Provide the last saved coordinates and state to LVGL
+	    data->point.x = last_x;
+	    data->point.y = last_y;
+	    data->state = last_state;
+}
+
+/* Callback function for GPIO EXTI interrupt */
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == TS_INT_PIN) {  // Check for the correct interrupt pin
+        if (_initialized) {
+            if (BSP_TS_GetState(0, &state) == BSP_ERROR_NONE) {
+                // Save the touch coordinates and state
+                last_x = state.TouchX;
+                last_y = state.TouchY;
+                last_state = state.TouchDetected ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
+            }
+        }
+    }
+}
+
 static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
 {
+    // Calculate the width and height of the area to copy
+    lv_coord_t width = lv_area_get_width(area);
+    lv_coord_t height = lv_area_get_height(area);
 
-	lv_coord_t width = lv_area_get_width(area);
-	  lv_coord_t height = lv_area_get_height(area);
+    // Calculate the destination address in the frame buffer
+    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
+                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
 
-	  DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;
-	  DMA2D->FGPFCCR = DMA2D_INPUT_RGB888;
-	  DMA2D->FGMAR = (uint32_t)color_p;
-	  DMA2D->FGOR = 0;
-	  DMA2D->OPFCCR = DMA2D_OUTPUT_RGB888;
-	  DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress + 2 * \
-	                (area->y1 * MY_DISP_HOR_RES + area->x1);
-	  DMA2D->OOR = MY_DISP_HOR_RES - width;
-	  DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);
-	  DMA2D->IFCR = 0x3FU;
-	  DMA2D->CR |= DMA2D_CR_TCIE;
-	  DMA2D->CR |= DMA2D_CR_START;
+    // Pointer to the destination in the frame buffer
+    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
 
+    // Pointer to the source buffer (provided by LVGL)
+    lv_color_t *src_ptr = color_p;
+
+    // Iterate over each row in the area
+    for (lv_coord_t y = 0; y < height; y++)
+    {
+        // Copy one row of pixels from the source to the destination
+        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
+
+        // Move the source pointer to the next row
+        src_ptr += width;
+
+        // Move the destination pointer to the next row in the frame buffer
+        dst_ptr += MY_DISP_HOR_RES;
+    }
+
+    // Notify LVGL that the flush is ready
+    lv_disp_flush_ready(drv);
 }
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+
+//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+//{
+//
+//	    lv_coord_t width = lv_area_get_width(area);
+//	    lv_coord_t height = lv_area_get_height(area);
+//
+//	    // Configure DMA2D for memory-to-memory transfer with RGB565
+//	    DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;  // Memory-to-Memory mode
+//	    DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;    // Input color format: RGB565
+//	    DMA2D->FGMAR = (uint32_t)color_p;       // Source buffer address
+//	    DMA2D->FGOR = 0;                        // No offset in input buffer
+//	    DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;    // Output color format: RGB565
+//	    DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress +
+//	                  2 * (area->y1 * MY_DISP_HOR_RES + area->x1);  // Frame buffer address
+//	    DMA2D->OOR = MY_DISP_HOR_RES - width;  // Output offset for stride
+//	    DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);  // Width and height
+//	    DMA2D->IFCR = 0x3FU;                   // Clear all interrupt flags
+//	    DMA2D->CR |= DMA2D_CR_TCIE;            // Enable transfer complete interrupt
+//	    DMA2D->CR |= DMA2D_CR_START;           // Start DMA2D transfer
+//
+//}
 
 
 void configureInterrupts(void)
@@ -264,12 +344,54 @@ void LVGL_Task(void *argument)
     }
 }
 
+#define PSRAM_START_ADDR   0xA0000000
+#define PSRAM_SIZE         (64 * 1024 * 1024)  // 64 MB
+#define TEST_PATTERN_1     0xAAAAAAAA  // Test pattern 1
+#define TEST_PATTERN_2     0x55555555  // Test pattern 2
+// Function to write and verify PSRAM
+void PSRAM_Test(void) {
+    volatile uint32_t *psram = (uint32_t *)PSRAM_START_ADDR;
+    uint32_t num_words = PSRAM_SIZE / sizeof(uint32_t);  // Number of 32-bit words
+
+    printf("Starting PSRAM Test...\n");
+
+    // Write Test Pattern 1
+    for (uint32_t i = 0; i < num_words; i++) {
+        psram[i] = TEST_PATTERN_1;
+    }
+
+    // Verify Test Pattern 1
+    for (uint32_t i = 0; i < num_words; i++) {
+        if (psram[i] != TEST_PATTERN_1) {
+            printf("PSRAM Test Failed at Address: 0x%08X\n", PSRAM_START_ADDR + i * 4);
+            return;
+        }
+    }
+    printf("Test Pattern 1 Verified!\n");
+
+    // Write Test Pattern 2
+    for (uint32_t i = 0; i < num_words; i++) {
+        psram[i] = TEST_PATTERN_2;
+    }
+
+    // Verify Test Pattern 2
+    for (uint32_t i = 0; i < num_words; i++) {
+        if (psram[i] != TEST_PATTERN_2) {
+            printf("PSRAM Test Failed at Address: 0x%08X\n", PSRAM_START_ADDR + i * 4);
+            return;
+        }
+    }
+    printf("Test Pattern 2 Verified!\n");
+
+    printf("PSRAM Test Passed Successfully!\n");
+}
 /**
   * @brief  The application entry point.
   * @retval int
   */
 int main(void)
 {
+
 
   /* USER CODE BEGIN 1 */
 
@@ -280,11 +402,13 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
+
   SystemClock_Config();
 
   /* Configure the peripherals common clocks */
@@ -317,11 +441,13 @@ int main(void)
  // MX_TouchGFX_PreOSInit();
   /* USER CODE BEGIN 2 */
 
+  //PSRAM_Test();
   /* initialize LVGL framework */
     lv_init();
 
     /* initialize display and touchscreen */
     lvgl_display_init();
+    lvgl_touchscreen_init();
     //lvgl_touchscreen_init();
 
     ui_init();
@@ -923,14 +1049,14 @@ static void MX_LTDC_Init(void)
   }
   pLayerCfg.WindowX0 = 0;
   pLayerCfg.WindowX1 = 480;
-  pLayerCfg.WindowY0 = 1;
-  pLayerCfg.WindowY1 = 481;
+  pLayerCfg.WindowY0 = 0;
+  pLayerCfg.WindowY1 = 480;
   pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
   pLayerCfg.Alpha = 255;
   pLayerCfg.Alpha0 = 0;
   pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
   pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-  pLayerCfg.FBStartAdress = 0x0;
+  pLayerCfg.FBStartAdress = (uint32_t)buf_1;;
   pLayerCfg.ImageWidth = 480;
   pLayerCfg.ImageHeight = 480;
   pLayerCfg.Backcolor.Blue = 0;

@@ -33,20 +33,21 @@
 */
 
 /* Entry Point */
+/* Entry Point */
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x800; /* required amount of heap */
-_Min_Stack_Size = 0x1000; /* required amount of stack */
+_Min_Heap_Size = 0x4000;      /* required amount of heap  */
+_Min_Stack_Size = 0x4000;    /* required amount of stack */
 
 /* Memories definition */
 MEMORY
 {
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 3008K
   FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 4096K
-  EXT_FLASH (r) : ORIGIN = 0x90000000, LENGTH = 64M
+  EXT_FLASH (rx): ORIGIN = 0x90000000, LENGTH = 64M
   PSRAM (xrw)   : ORIGIN = 0xA0000000, LENGTH = 64M
 }
 
@@ -60,6 +61,13 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
+
+  /* Place ExtFlashSection before .text and .rodata */
+  .ExtFlashSection :
+  {
+    *(.ExtFlashSection .ExtFlashSection.*)
+    . = ALIGN(4);
+  } >EXT_FLASH
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :
@@ -148,6 +156,7 @@ SECTIONS
 
   } >RAM AT> FLASH
 
+  
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
   .bss :
@@ -192,10 +201,4 @@ SECTIONS
     . = ALIGN(0x4);
   } >RAM
 
-  ExtFlashSection :
-  {
-    *(ExtFlashSection ExtFlashSection.*)
-    *(.gnu.linkonce.r.*)
-    . = ALIGN(0x4);
-  } >EXT_FLASH
 }
