@@ -251,64 +251,64 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
     }
 }
 
-static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
-{
-    // Calculate the width and height of the area to copy
-    lv_coord_t width = lv_area_get_width(area);
-    lv_coord_t height = lv_area_get_height(area);
-
-    // Calculate the destination address in the frame buffer
-    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
-                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
-
-    // Pointer to the destination in the frame buffer
-    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
-
-    // Pointer to the source buffer (provided by LVGL)
-    lv_color_t *src_ptr = color_p;
-
-    // Iterate over each row in the area
-    for (lv_coord_t y = 0; y < height; y++)
-    {
-        // Copy one row of pixels from the source to the destination
-        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
-
-        // Move the source pointer to the next row
-        src_ptr += width;
-
-        // Move the destination pointer to the next row in the frame buffer
-        dst_ptr += MY_DISP_HOR_RES;
-    }
-
-    // Notify LVGL that the flush is ready
-    lv_disp_flush_ready(drv);
-}
+//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+//{
+//    // Calculate the width and height of the area to copy
+//    lv_coord_t width = lv_area_get_width(area);
+//    lv_coord_t height = lv_area_get_height(area);
+//
+//    // Calculate the destination address in the frame buffer
+//    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
+//                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
+//
+//    // Pointer to the destination in the frame buffer
+//    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
+//
+//    // Pointer to the source buffer (provided by LVGL)
+//    lv_color_t *src_ptr = color_p;
+//
+//    // Iterate over each row in the area
+//    for (lv_coord_t y = 0; y < height; y++)
+//    {
+//        // Copy one row of pixels from the source to the destination
+//        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
+//
+//        // Move the source pointer to the next row
+//        src_ptr += width;
+//
+//        // Move the destination pointer to the next row in the frame buffer
+//        dst_ptr += MY_DISP_HOR_RES;
+//    }
+//
+//    // Notify LVGL that the flush is ready
+//    lv_disp_flush_ready(drv);
+//}
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
-//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
-//{
-//
-//	    lv_coord_t width = lv_area_get_width(area);
-//	    lv_coord_t height = lv_area_get_height(area);
-//
-//	    // Configure DMA2D for memory-to-memory transfer with RGB565
-//	    DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;  // Memory-to-Memory mode
-//	    DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;    // Input color format: RGB565
-//	    DMA2D->FGMAR = (uint32_t)color_p;       // Source buffer address
-//	    DMA2D->FGOR = 0;                        // No offset in input buffer
-//	    DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;    // Output color format: RGB565
-//	    DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress +
-//	                  2 * (area->y1 * MY_DISP_HOR_RES + area->x1);  // Frame buffer address
-//	    DMA2D->OOR = MY_DISP_HOR_RES - width;  // Output offset for stride
-//	    DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);  // Width and height
-//	    DMA2D->IFCR = 0x3FU;                   // Clear all interrupt flags
-//	    DMA2D->CR |= DMA2D_CR_TCIE;            // Enable transfer complete interrupt
-//	    DMA2D->CR |= DMA2D_CR_START;           // Start DMA2D transfer
-//
-//}
+static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+{
+
+	    lv_coord_t width = lv_area_get_width(area);
+	    lv_coord_t height = lv_area_get_height(area);
+
+	    // Configure DMA2D for memory-to-memory transfer with RGB565
+	    DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;  // Memory-to-Memory mode
+	    DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;    // Input color format: RGB565
+	    DMA2D->FGMAR = (uint32_t)color_p;       // Source buffer address
+	    DMA2D->FGOR = 0;                        // No offset in input buffer
+	    DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;    // Output color format: RGB565
+	    DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress +
+	                  2 * (area->y1 * MY_DISP_HOR_RES + area->x1);  // Frame buffer address
+	    DMA2D->OOR = MY_DISP_HOR_RES - width;  // Output offset for stride
+	    DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);  // Width and height
+	    DMA2D->IFCR = 0x3FU;                   // Clear all interrupt flags
+	    DMA2D->CR |= DMA2D_CR_TCIE;            // Enable transfer complete interrupt
+	    DMA2D->CR |= DMA2D_CR_START;           // Start DMA2D transfer
+
+}
 
 
 void configureInterrupts(void)
@@ -344,47 +344,6 @@ void LVGL_Task(void *argument)
     }
 }
 
-#define PSRAM_START_ADDR   0xA0000000
-#define PSRAM_SIZE         (64 * 1024 * 1024)  // 64 MB
-#define TEST_PATTERN_1     0xAAAAAAAA  // Test pattern 1
-#define TEST_PATTERN_2     0x55555555  // Test pattern 2
-// Function to write and verify PSRAM
-void PSRAM_Test(void) {
-    volatile uint32_t *psram = (uint32_t *)PSRAM_START_ADDR;
-    uint32_t num_words = PSRAM_SIZE / sizeof(uint32_t);  // Number of 32-bit words
-
-    printf("Starting PSRAM Test...\n");
-
-    // Write Test Pattern 1
-    for (uint32_t i = 0; i < num_words; i++) {
-        psram[i] = TEST_PATTERN_1;
-    }
-
-    // Verify Test Pattern 1
-    for (uint32_t i = 0; i < num_words; i++) {
-        if (psram[i] != TEST_PATTERN_1) {
-            printf("PSRAM Test Failed at Address: 0x%08X\n", PSRAM_START_ADDR + i * 4);
-            return;
-        }
-    }
-    printf("Test Pattern 1 Verified!\n");
-
-    // Write Test Pattern 2
-    for (uint32_t i = 0; i < num_words; i++) {
-        psram[i] = TEST_PATTERN_2;
-    }
-
-    // Verify Test Pattern 2
-    for (uint32_t i = 0; i < num_words; i++) {
-        if (psram[i] != TEST_PATTERN_2) {
-            printf("PSRAM Test Failed at Address: 0x%08X\n", PSRAM_START_ADDR + i * 4);
-            return;
-        }
-    }
-    printf("Test Pattern 2 Verified!\n");
-
-    printf("PSRAM Test Passed Successfully!\n");
-}
 /**
   * @brief  The application entry point.
   * @retval int
@@ -455,17 +414,19 @@ int main(void)
 
     configureInterrupts();
 
+    /* Init scheduler */
+     osKernelInitialize();
+
     // Create LVGL task
        osThreadAttr_t attr = {
            .name = "LVGL_Task",
-           .priority = osPriorityNormal,
+           .priority = osPriorityHigh,
            .stack_size = 512 * 4
        };
        osThreadNew(LVGL_Task, NULL, &attr);
   /* USER CODE END 2 */
 
-  /* Init scheduler */
-  osKernelInitialize();
+
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
   //MX_FREERTOS_Init();

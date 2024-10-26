@@ -23,7 +23,7 @@ Waiting for debugger connection...
 
 
 
-Log output file:   C:\Users\rohit\AppData\Local\Temp\STM32CubeProgrammer_a55040.log
+Log output file:   C:\Users\rohit\AppData\Local\Temp\STM32CubeProgrammer_a08724.log
 ST-LINK SN  : 002F00173033510535393935
 ST-LINK FW  : V3J15M7
 Board       : STM32U5G9J-DK1
@@ -47,18 +47,16 @@ Debug in Low Power mode enabled
 
 
 Memory Programming ...
-Opening and parsing file: ST-LINK_GDB_server_a55040.srec
-  File          : ST-LINK_GDB_server_a55040.srec
-  Size          : 11.41 MB 
+Opening and parsing file: ST-LINK_GDB_server_a08724.srec
+  File          : ST-LINK_GDB_server_a08724.srec
+  Size          : 2.26 MB 
   Address       : 0x08000000 
 
 
 Erasing memory corresponding to segment 0:
-Erasing internal memory sectors [0 76]
-Erasing memory corresponding to segment 1:
-Erasing external memory sectors [0 172]
+Erasing internal memory sectors [0 289]
 Download in Progress:
 
 
 File download complete
-Time elapsed during download operation: 00:01:01.654
+Time elapsed during download operation: 00:00:22.798

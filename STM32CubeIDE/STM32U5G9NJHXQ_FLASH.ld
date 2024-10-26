@@ -39,8 +39,8 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x4000;      /* required amount of heap  */
-_Min_Stack_Size = 0x4000;    /* required amount of stack */
+_Min_Heap_Size = 0x2000;      /* required amount of heap  */
+_Min_Stack_Size = 0x2000;    /* required amount of stack */
 
 /* Memories definition */
 MEMORY
@@ -48,7 +48,8 @@ MEMORY
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 3008K
   FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 4096K
   EXT_FLASH (rx): ORIGIN = 0x90000000, LENGTH = 64M
-  PSRAM (xrw)   : ORIGIN = 0xA0000000, LENGTH = 64M
+  PSRAM1 (xrw)    : ORIGIN = 0xA0000000, LENGTH = 32M  /* LVGL memory pool */
+  PSRAM2 (xrw)    : ORIGIN = 0xA2000000, LENGTH = 32M  /* LVGL display buffers */
 }
 
 /* Sections */
@@ -61,7 +62,11 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
-
+  
+    /* Place the LVGL display buffers in the second half of PSRAM */
+    .lvgl_buf (NOLOAD) : {
+        KEEP(*(.lvgl_buf))
+    } > PSRAM2
   /* Place ExtFlashSection before .text and .rodata */
   .ExtFlashSection :
   {
@@ -145,7 +150,8 @@ SECTIONS
   .data :
   {
     . = ALIGN(4);
-    _sdata = .;        /* create a global symbol at data start */
+    _sdata = .;        
+    /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
     *(.RamFunc)        /* .RamFunc sections */
