@@ -23,7 +23,7 @@ Waiting for debugger connection...
 
 
 
-Log output file:   C:\Users\rohit\AppData\Local\Temp\STM32CubeProgrammer_a08724.log
+Log output file:   C:\Users\rohit\AppData\Local\Temp\STM32CubeProgrammer_a23992.log
 ST-LINK SN  : 002F00173033510535393935
 ST-LINK FW  : V3J15M7
 Board       : STM32U5G9J-DK1
@@ -47,8 +47,8 @@ Debug in Low Power mode enabled
 
 
 Memory Programming ...
-Opening and parsing file: ST-LINK_GDB_server_a08724.srec
-  File          : ST-LINK_GDB_server_a08724.srec
+Opening and parsing file: ST-LINK_GDB_server_a23992.srec
+  File          : ST-LINK_GDB_server_a23992.srec
   Size          : 2.26 MB 
   Address       : 0x08000000 
 
@@ -59,4 +59,6 @@ Download in Progress:
 
 
 File download complete
-Time elapsed during download operation: 00:00:22.798
+Time elapsed during download operation: 00:00:22.773
+Shutting down...
+Exit.

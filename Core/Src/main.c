@@ -148,16 +148,19 @@ static void disp_flush (lv_disp_drv_t*, const lv_area_t*, lv_color_t*);
 static lv_disp_drv_t disp_drv;
 static lv_disp_draw_buf_t disp_buf;
 
-static __attribute__((aligned(32))) lv_color_t buf_1[MY_DISP_HOR_RES * MY_DISP_VER_RES];
-static __attribute__((aligned(32))) lv_color_t buf_2[MY_DISP_HOR_RES * MY_DISP_VER_RES];
+static __attribute__((aligned(32))) lv_color_t buf_1[MY_DISP_HOR_RES * 100];
+//static __attribute__((aligned(32))) lv_color_t buf_2[MY_DISP_HOR_RES * 40];
 
+//static __attribute__((section(".lvgl_buf"), aligned(32))) lv_color_t framebuffer[MY_DISP_HOR_RES * MY_DISP_VER_RES];
+
+static __attribute__((aligned(32))) lv_color_t framebuffer[MY_DISP_HOR_RES * MY_DISP_VER_RES];
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 void lvgl_display_init(void)
 {
     /* Initialize display buffer */
-	lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, MY_DISP_HOR_RES * MY_DISP_VER_RES);
+	lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);
 
     /* Initialize display driver */
     lv_disp_drv_init(&disp_drv);
@@ -176,7 +179,7 @@ void lvgl_display_init(void)
     __HAL_DSI_WRAPPER_DISABLE(&hdsi);
 
     /* Set the LTDC frame buffer start address */
-    HAL_LTDC_SetAddress(&hltdc, (uint32_t)buf_1, 0);
+    HAL_LTDC_SetAddress(&hltdc, (uint32_t)framebuffer, 0);
 
     /* Re-enable DSI wrapper after setting the frame buffer */
     __HAL_DSI_WRAPPER_ENABLE(&hdsi);
@@ -251,89 +254,89 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin) {
     }
 }
 
-//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
-//{
-//    // Calculate the width and height of the area to copy
-//    lv_coord_t width = lv_area_get_width(area);
-//    lv_coord_t height = lv_area_get_height(area);
-//
-//    // Calculate the destination address in the frame buffer
-//    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
-//                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
-//
-//    // Pointer to the destination in the frame buffer
-//    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
-//
-//    // Pointer to the source buffer (provided by LVGL)
-//    lv_color_t *src_ptr = color_p;
-//
-//    // Iterate over each row in the area
-//    for (lv_coord_t y = 0; y < height; y++)
-//    {
-//        // Copy one row of pixels from the source to the destination
-//        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
-//
-//        // Move the source pointer to the next row
-//        src_ptr += width;
-//
-//        // Move the destination pointer to the next row in the frame buffer
-//        dst_ptr += MY_DISP_HOR_RES;
-//    }
-//
-//    // Notify LVGL that the flush is ready
-//    lv_disp_flush_ready(drv);
-//}
+static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+{
+    // Calculate the width and height of the area to copy
+    lv_coord_t width = lv_area_get_width(area);
+    lv_coord_t height = lv_area_get_height(area);
+
+    // Calculate the destination address in the frame buffer
+    uint32_t dstAddress = hltdc.LayerCfg[0].FBStartAdress +
+                          2 * (area->y1 * MY_DISP_HOR_RES + area->x1);
+
+    // Pointer to the destination in the frame buffer
+    lv_color_t *dst_ptr = (lv_color_t *)dstAddress;
+
+    // Pointer to the source buffer (provided by LVGL)
+    lv_color_t *src_ptr = color_p;
+
+    // Iterate over each row in the area
+    for (lv_coord_t y = 0; y < height; y++)
+    {
+        // Copy one row of pixels from the source to the destination
+        memcpy(dst_ptr, src_ptr, width * sizeof(lv_color_t));
+
+        // Move the source pointer to the next row
+        src_ptr += width;
+
+        // Move the destination pointer to the next row in the frame buffer
+        dst_ptr += MY_DISP_HOR_RES;
+    }
+
+    // Notify LVGL that the flush is ready
+    lv_disp_flush_ready(drv);
+}
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
-static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
-{
+//static void disp_flush(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
+//{
+//
+//	    lv_coord_t width = lv_area_get_width(area);
+//	    lv_coord_t height = lv_area_get_height(area);
+//
+//	    // Configure DMA2D for memory-to-memory transfer with RGB565
+//	    DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;  // Memory-to-Memory mode
+//	    DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;    // Input color format: RGB565
+//	    DMA2D->FGMAR = (uint32_t)color_p;       // Source buffer address
+//	    DMA2D->FGOR = 0;                        // No offset in input buffer
+//	    DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;    // Output color format: RGB565
+//	    DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress +
+//	                  2 * (area->y1 * MY_DISP_HOR_RES + area->x1);  // Frame buffer address
+//	    DMA2D->OOR = MY_DISP_HOR_RES - width;  // Output offset for stride
+//	    DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);  // Width and height
+//	    DMA2D->IFCR = 0x3FU;                   // Clear all interrupt flags
+//	    DMA2D->CR |= DMA2D_CR_TCIE;            // Enable transfer complete interrupt
+//	    DMA2D->CR |= DMA2D_CR_START;           // Start DMA2D transfer
+//
+//}
 
-	    lv_coord_t width = lv_area_get_width(area);
-	    lv_coord_t height = lv_area_get_height(area);
 
-	    // Configure DMA2D for memory-to-memory transfer with RGB565
-	    DMA2D->CR = 0x0U << DMA2D_CR_MODE_Pos;  // Memory-to-Memory mode
-	    DMA2D->FGPFCCR = DMA2D_INPUT_RGB565;    // Input color format: RGB565
-	    DMA2D->FGMAR = (uint32_t)color_p;       // Source buffer address
-	    DMA2D->FGOR = 0;                        // No offset in input buffer
-	    DMA2D->OPFCCR = DMA2D_OUTPUT_RGB565;    // Output color format: RGB565
-	    DMA2D->OMAR = hltdc.LayerCfg[0].FBStartAdress +
-	                  2 * (area->y1 * MY_DISP_HOR_RES + area->x1);  // Frame buffer address
-	    DMA2D->OOR = MY_DISP_HOR_RES - width;  // Output offset for stride
-	    DMA2D->NLR = (width << DMA2D_NLR_PL_Pos) | (height << DMA2D_NLR_NL_Pos);  // Width and height
-	    DMA2D->IFCR = 0x3FU;                   // Clear all interrupt flags
-	    DMA2D->CR |= DMA2D_CR_TCIE;            // Enable transfer complete interrupt
-	    DMA2D->CR |= DMA2D_CR_START;           // Start DMA2D transfer
-
-}
-
-
-void configureInterrupts(void)
-{
-    NVIC_SetPriority(DSI_IRQn, 9);
-    NVIC_EnableIRQ(DSI_IRQn);
-
-    // New configurations for DMA2D interrupt
-    NVIC_SetPriority(DMA2D_IRQn, 9); // You can adjust the priority as needed
-    NVIC_EnableIRQ(DMA2D_IRQn);
-}
+//void configureInterrupts(void)
+//{
+//    NVIC_SetPriority(DSI_IRQn, 9);
+//    NVIC_EnableIRQ(DSI_IRQn);
+//
+//    // New configurations for DMA2D interrupt
+//    NVIC_SetPriority(DMA2D_IRQn, 9); // You can adjust the priority as needed
+//    NVIC_EnableIRQ(DMA2D_IRQn);
+//}
 
 
 /**
   * @brief This function handles GPU2D Error interrupt.
   */
-void DMA2D_IRQHandler(void)
-{
-	//HAL_DMA2D_IRQHandler(&hdma2d);  // Handle the DMA2D interrupt
-    if (DMA2D->ISR & DMA2D_ISR_TCIF)
-    {
-        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
-        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
-    }
-}
+//void DMA2D_IRQHandler(void)
+//{
+//	//HAL_DMA2D_IRQHandler(&hdma2d);  // Handle the DMA2D interrupt
+//    if (DMA2D->ISR & DMA2D_ISR_TCIF)
+//    {
+//        DMA2D->IFCR = DMA2D_IFCR_CTCIF; /* Clear the interrupt flag */
+//        lv_disp_flush_ready(&disp_drv);  /* Notify LVGL that flush is complete */
+//    }
+//}
 
 void LVGL_Task(void *argument)
 {
@@ -343,6 +346,38 @@ void LVGL_Task(void *argument)
         osDelay(5);         // Delay for 5ms
     }
 }
+
+#include "stm32u5xx_hal.h"  // Adjust the header file according to your STM32 series
+
+#include "stm32u5xx_hal.h"
+
+#include "stm32u5xx_hal.h"
+
+void MPU_Config(void)
+{
+    MPU_Region_InitTypeDef MPU_InitStruct = {0};
+
+    /* Disable the MPU before configuration */
+    HAL_MPU_Disable();
+
+    /* Configure MPU region for PSRAM1 (0xA0000000 - 0xA3FFFFFF) */
+    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+    MPU_InitStruct.Number = MPU_REGION_NUMBER0;                // Use MPU region 0
+    MPU_InitStruct.BaseAddress = 0xA0000000;                   // Start address of PSRAM1
+    MPU_InitStruct.LimitAddress = 0xA3FFFFFF;                  // End address of PSRAM1 (64MB)
+    MPU_InitStruct.AttributesIndex = MPU_ATTRIBUTES_NUMBER0;   // Use default memory attribute 0
+    MPU_InitStruct.AccessPermission = MPU_REGION_ALL_RW;  // Full read/write access
+    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;  // No code execution from PSRAM
+    MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;     // Not shareable
+
+    /* Configure the region with the given settings */
+    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+    /* Re-enable the MPU */
+    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+}
+
+
 
 /**
   * @brief  The application entry point.
@@ -376,6 +411,8 @@ int main(void)
   /* Configure the System Power */
   SystemPower_Config();
 
+  MPU_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -387,10 +424,10 @@ int main(void)
   MX_TIM8_Init();
   MX_DMA2D_Init();
   MX_GPU2D_Init();
+  MX_HSPI1_Init();
   MX_DSIHOST_DSI_Init();
   MX_LTDC_Init();
   MX_OCTOSPI1_Init();
-  MX_HSPI1_Init();
   MX_DCACHE1_Init();
   MX_DCACHE2_Init();
   MX_ICACHE_Init();
@@ -412,7 +449,7 @@ int main(void)
     ui_init();
 
 
-    configureInterrupts();
+    //configureInterrupts();
 
     /* Init scheduler */
      osKernelInitialize();
@@ -1017,7 +1054,7 @@ static void MX_LTDC_Init(void)
   pLayerCfg.Alpha0 = 0;
   pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
   pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-  pLayerCfg.FBStartAdress = (uint32_t)buf_1;;
+  pLayerCfg.FBStartAdress = (uint32_t)framebuffer;;
   pLayerCfg.ImageWidth = 480;
   pLayerCfg.ImageHeight = 480;
   pLayerCfg.Backcolor.Blue = 0;

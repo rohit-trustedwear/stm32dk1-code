@@ -48,8 +48,8 @@ MEMORY
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 3008K
   FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 4096K
   EXT_FLASH (rx): ORIGIN = 0x90000000, LENGTH = 64M
-  PSRAM1 (xrw)    : ORIGIN = 0xA0000000, LENGTH = 32M  /* LVGL memory pool */
-  PSRAM2 (xrw)    : ORIGIN = 0xA2000000, LENGTH = 32M  /* LVGL display buffers */
+  PSRAM1 (xrw)    : ORIGIN = 0xA0000000, LENGTH = 64M  /* LVGL memory pool */
+  
 }
 
 /* Sections */
@@ -66,7 +66,7 @@ SECTIONS
     /* Place the LVGL display buffers in the second half of PSRAM */
     .lvgl_buf (NOLOAD) : {
         KEEP(*(.lvgl_buf))
-    } > PSRAM2
+    } > PSRAM1
   /* Place ExtFlashSection before .text and .rodata */
   .ExtFlashSection :
   {
